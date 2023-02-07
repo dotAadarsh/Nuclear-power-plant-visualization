@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <meta powerplant="viewport" content="width=device-width, initial-scale=1.0">
+    <py-env>
+        - pandas
+        - folium
+    </py-env>
+
+    <title>World Nuclear Power Plant</title>
+</head>
+
+<body>
+    <div id="map" style="width: 100%; height: 100%"></div>
+    
+    <py-script id="map">
+import folium
+import pandas as pd
+import json
+
+from pyodide.http import open_url
+
+location = "./World_Nuclear_Power_Plant.csv"
+plant_station_locations = pd.read_csv(open_url(location))
+
+plant_station_locations = plant_station_locations[["latitude", "longitude", "powerplant"]]
+map = folium.Map(location=[plant_station_locations.latitude.mean(), plant_station_locations.longitude.mean()], tiles="cartodbdark_matter", zoom_start=5,control_scale=True)
+
+for index, location_info in plant_station_locations.iterrows():
+    folium.Marker([location_info["latitude"], location_info["longitude"]], popup=location_info["powerplant"]).add_to(map)
+
+map
+    </py-script>
+</body>
+
+</html>
